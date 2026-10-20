@@ -1,5 +1,5 @@
-/* Escena 3D (Three.js): fondo con geometrías flotantes + BIT, el mini robot agente que narra.
-   Expone window.BIT = { say(texto, {mood}), wave(), celebrate(), toggleMute() } */
+/* Escena 3D (Three.js): fondo con geometrías flotantes + SMIDY, el mini robot agente que narra.
+   Expone window.SMIDY = { say(texto, {mood}), wave(), celebrate(), toggleMute() } */
 (function () {
   const bubble = document.getElementById("bubble");
   const bubbleText = document.getElementById("bubbleText");
@@ -108,7 +108,7 @@
 
   const wave = () => { S.waveUntil = now() + 2.4; };
   const celebrate = () => { S.celebrateAt = now(); };
-  window.BIT = { say, wave, celebrate, toggleMute, isMuted: () => S.muted, isTalking: () => S.talking };
+  window.SMIDY = { say, wave, celebrate, toggleMute, isMuted: () => S.muted, isTalking: () => S.talking };
 
   /* ================= 3D ================= */
   if (!T) return;
@@ -143,7 +143,7 @@
   const stars = new T.Points(starGeo, new T.PointsMaterial({ color: 0x9fdcff, size: 0.06, transparent: true, opacity: 0.8 }));
   bg.add(stars);
 
-  /* --- BIT --- */
+  /* --- SMIDY --- */
   const white = new T.MeshStandardMaterial({ color: 0xe8f1ff, metalness: 0.35, roughness: 0.3 });
   const dark = new T.MeshStandardMaterial({ color: 0x07122a, metalness: 0.6, roughness: 0.15 });
   const cyanMat = new T.MeshBasicMaterial({ color: 0x00e5ff });
@@ -216,20 +216,20 @@
     knot.rotation.x = el * 0.12; knot.rotation.y = el * 0.08;
     cube.rotation.x = el * 0.2; cube.rotation.y = el * 0.17;
     stars.rotation.y = el * 0.01;
-    bg.rotation.y += (S.mx * 0.2 - bg.rotation.y) * 0.04;
-    bg.rotation.x += (-S.my * 0.12 - bg.rotation.x) * 0.04;
+    bg.rotation.y += (TILT.x * 0.25 - bg.rotation.y) * 0.04;
+    bg.rotation.x += (TILT.y * 0.15 - bg.rotation.x) * 0.04;
 
-    // entrada: BIT vuela desde arriba a la derecha dando una vuelta
+    // entrada: SMIDY vuela desde arriba a la derecha dando una vuelta
     const k = ease(el / 2);
     const startX = dock.x + 5, startY = dock.y + 5;
     root.position.x = startX + (dock.x - startX) * k;
     root.position.y = startY + (dock.y - startY) * k + Math.sin(t * 2) * 0.06 * dock.s * 3;
     root.scale.setScalar(dock.s * (0.6 + 0.4 * k));
-    root.rotation.y = (1 - k) * Math.PI * 4 + Math.sin(t * 0.8) * 0.12;
+    root.rotation.y = (1 - k) * Math.PI * 4 + 0.4 + Math.sin(t * 0.8) * 0.1;      // cuerpo girado hacia el centro
 
     // mirar al puntero
-    head.rotation.y += (S.mx * 0.7 - head.rotation.y) * 0.08;
-    head.rotation.x += (-S.my * 0.35 - head.rotation.x) * 0.08;
+    head.rotation.y += (0.5 + TILT.x * 0.3 - head.rotation.y) * 0.08;   // mira hacia el centro de la pantalla
+    head.rotation.x += (-(0.14 + TILT.y * 0.3) - head.rotation.x) * 0.08;
 
     // parpadeo
     if (el > nextBlink) { blinkEnd = el + 0.12; nextBlink = el + 2 + Math.random() * 3; }

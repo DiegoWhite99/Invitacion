@@ -68,11 +68,11 @@ const where = () => (CONFIG.place === "Por confirmar" ? "El lugar te lo confirma
 const narr = (k, g = guest) => NARR[k].replace(/\{(\w+)\}/g, (_, v) => ({
   first: g && first(g), saludo: g && (g.g === "f" ? "Querida" : "Querido"), msg: g && g.msg, where: where(),
 }[v]));
-const say = (k, o) => (window.BIT ? BIT.say(narr(k), o) : sleep(1500));
+const say = (k, o) => (window.SMIDY ? SMIDY.say(narr(k), o) : sleep(1500));
 
 async function boot() {
   $("#startWrap").hidden = true;
-  SFX.unlock(); SFX.blip(); MUSIC.start();
+  SFX.unlock(); SFX.blip(); MUSIC.start(); TILT.enable();
   const log = $("#bootLog");
   say(guest ? "intro" : "intro_lookup", { mood: "wave" });
   const lines = [
@@ -225,7 +225,7 @@ function respond(answer) {
   }
   renderState();
   if (answer === "yes") {
-    confetti(); SFX.confirm(); if (window.BIT) BIT.celebrate();
+    confetti(); SFX.confirm(); if (window.SMIDY) SMIDY.celebrate();
     say("yes");
   } else say("no");
   // Abre WhatsApp con el mensaje listo para enviar
@@ -252,10 +252,3 @@ function confetti() {
 }
 
 $("#start").addEventListener("click", boot);
-
-/* ---------- Inclinación 3D del sobre con el puntero ---------- */
-addEventListener("mousemove", (e) => {
-  const t = $("#tilt"); if (!t) return;
-  t.style.setProperty("--ry", ((e.clientX / innerWidth) * 2 - 1) * 14 + "deg");
-  t.style.setProperty("--rx", -((e.clientY / innerHeight) * 2 - 1) * 10 + "deg");
-});

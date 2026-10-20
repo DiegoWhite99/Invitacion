@@ -4,7 +4,7 @@
   python3 invitacion.py serve [puerto]   Sirve la web y guarda las confirmaciones (API /api/rsvp)
   python3 invitacion.py links <url_base> Genera links.txt con el link y mensaje de cada invitado
   python3 invitacion.py resumen          Muestra quién confirmó (lee rsvps.json)
-  python3 invitacion.py voces            Genera los audios de BIT en voices/ (requiere: pip install edge-tts)
+  python3 invitacion.py voces            Genera los audios de SMIDY en voices/ (requiere: pip install edge-tts)
 """
 import asyncio
 import hashlib
@@ -17,9 +17,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DB = ROOT / "rsvps.json"
-PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "sfx.js", "music.js", "admin.html"}
+PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "sfx.js", "music.js", "tilt.js", "admin.html"}
 TYPES_EXTRA = {".mp3": "audio/mpeg", ".json": "application/json"}
-# Voz de BIT: neuronal en español, con tono agudo; la web la acelera y le da el efecto robótico.
+# Voz de SMIDY: neuronal en español, con tono agudo; la web la acelera y le da el efecto robótico.
 VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+40Hz", "+4%"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
 

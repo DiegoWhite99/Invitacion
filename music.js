@@ -1,9 +1,9 @@
 /* Música de fondo: house suave estilo "french touch", compuesta y sintetizada en vivo
-   con Web Audio (tema original, sin archivos). Baja sola cuando BIT habla. */
+   con Web Audio (tema original, sin archivos). Baja sola cuando SMIDY habla. */
 window.MUSIC = (() => {
   const AC = window.AudioContext || window.webkitAudioContext;
   const BPM = 116, STEP = 60 / BPM / 4;           // semicorchea
-  const VOL = 0.2, VOL_TALK = 0.07;               // volumen normal / mientras habla BIT
+  const VOL = 0.2, VOL_TALK = 0.07;               // volumen normal / mientras habla SMIDY
   const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
 
   // Am7 – Fmaj7 – Cmaj7 – G7  (raíz del bajo + acorde)
@@ -99,8 +99,8 @@ window.MUSIC = (() => {
       next += STEP;
       if (++step === 16) { step = 0; bar++; }
     }
-    const muted = window.BIT && BIT.isMuted && BIT.isMuted();
-    const talking = window.BIT && BIT.isTalking && BIT.isTalking();
+    const muted = window.SMIDY && SMIDY.isMuted && SMIDY.isMuted();
+    const talking = window.SMIDY && SMIDY.isTalking && SMIDY.isTalking();
     out.gain.setTargetAtTime(muted ? 0 : talking ? VOL_TALK : VOL, ctx.currentTime, 0.4);
   }
 

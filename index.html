@@ -20,7 +20,7 @@
     <pre id="bootLog"></pre>
     <div class="start-wrap" id="startWrap">
       <button class="btn primary" id="start">&#9654; INICIAR EXPERIENCIA</button>
-      <p>Con sonido 🔊 · BIT te va a narrar la invitación</p>
+      <p>Con sonido 🔊 · SMIDY te va a narrar la invitación</p>
     </div>
     <form id="lookup" hidden>
       <label for="nameInput">&gt; ingresa tu nombre:</label>
@@ -62,6 +62,7 @@
 
 <!-- Pantalla 3: carta -->
 <section id="cardScreen" class="screen">
+  <div class="card-tilt">
   <article class="card" id="card">
     <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
     <header class="card-bar"><span class="rec">&#9679; REC</span><span>ctOS // PAQUETE_DESCIFRADO</span><span id="cardId">ID-00000</span></header>
@@ -106,6 +107,7 @@
       <p class="status" id="status" hidden></p>
     </div>
   </article>
+  </div>
 </section>
 
 <!-- Efectos de apertura -->
@@ -115,13 +117,14 @@
 <div id="flash"></div>
 <div class="scan-overlay"></div>
 
-<!-- BIT: el agente robot -->
+<!-- SMIDY: el agente robot -->
 <div class="dock" aria-live="polite">
-  <div class="bubble" id="bubble"><b>BIT · agente</b><span id="bubbleText"></span></div>
+  <div class="bubble" id="bubble"><b>SMIDY · agente</b><span id="bubbleText"></span></div>
 </div>
 <button id="mute" aria-label="Silenciar voz">🔊</button>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="tilt.js"></script>
 <script src="sfx.js"></script>
 <script src="music.js"></script>
 <script src="robot.js"></script>

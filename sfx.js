@@ -8,7 +8,7 @@ window.SFX = (() => {
     if (ctx.state === "suspended") ctx.resume();
     return ctx;
   };
-  const ready = () => ctx && !(window.BIT && BIT.isMuted && BIT.isMuted());
+  const ready = () => ctx && !(window.SMIDY && SMIDY.isMuted && SMIDY.isMuted());
 
   function tone(f1, f2, dur, type = "sine", vol = 0.3, delay = 0) {
     if (!ready()) return;

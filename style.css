@@ -174,7 +174,7 @@ body {
 .status { margin-top: 14px; font-size: 13px; color: var(--green); }
 .status button { background: none; border: 0; color: var(--cyan); font: inherit; text-decoration: underline; cursor: pointer; margin-left: 6px; }
 
-/* ---------- BIT (dock de narración) ---------- */
+/* ---------- SMIDY (dock de narración) ---------- */
 .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; align-items: flex-end; padding: 0 16px 24px 200px; pointer-events: none; }
 .bubble {
   max-width: 620px; min-height: 52px; padding: 10px 14px; border-radius: 14px 14px 14px 2px;
@@ -397,3 +397,12 @@ body::after { /* líneas de escaneo + viñeta sobre todo */
 @media (max-width: 640px) {
   .bubble { max-height: 96px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; font-size: 11.5px; }
 }
+
+/* =====================================================
+   Inclinación (giroscopio / mouse) vía tilt.js
+   ===================================================== */
+.tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: none; }
+.card-tilt { width: min(560px, 100%); margin: auto; transform: perspective(1000px) rotateX(var(--crx, 0deg)) rotateY(var(--cry, 0deg)); will-change: transform; }
+.card-tilt .card { width: 100%; margin: 0; }
+.card::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255,255,255,.13), rgba(0,229,255,.06) 30%, transparent 55%); }
