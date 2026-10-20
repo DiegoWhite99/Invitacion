@@ -4,6 +4,8 @@ const CONFIG = {
   whatsapp: "",
   // Lugar de la cena
   place: "Plaza de las Américas, sala de comidas, Sr. Chicharrón",
+  // Búsqueda para el mapa (ajusta la ciudad si hace falta)
+  mapQuery: "Plaza de las Américas, Bogotá, Colombia",
   // Fecha del evento (año, mes 0-11, día, hora, min)
   date: new Date(2026, 9, 27, 19, 0, 0),
   // Opcional: URL de Google Apps Script para guardar confirmaciones en una hoja (ver README)
@@ -167,6 +169,9 @@ $("#envelope").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.k
 /* ---------- Carta ---------- */
 async function showCard() {
   $("#familyTag").textContent = guest.family || guest.rel;
+  const q = encodeURIComponent(CONFIG.mapQuery);
+  $("#mapLink").href = `https://www.google.com/maps/search/?api=1&query=${q}`;
+  $("#mapFrame").src = `https://www.google.com/maps?q=${q}&output=embed`;
   $("#pName").textContent = guest.name.toUpperCase();
   $("#pRel").textContent = guest.rel.toUpperCase();
   $("#avatarLetter").textContent = guest.name[0];

@@ -34,6 +34,7 @@
 <section id="envelopeScreen" class="screen">
   <p class="hint">[ PAQUETE ENTRANTE ]</p>
   <div class="tilt" id="tilt">
+  <div class="orbit"><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="reticle"><i></i><i></i><i></i><i></i><span>PAQUETE CIFRADO · ORIGEN: DIEGO</span></div>
   <div class="envelope" id="envelope" tabindex="0" role="button" aria-label="Abrir la carta">
     <div class="env-back"></div>
@@ -41,12 +42,18 @@
       <span>&lt;/&gt;</span>
     </div>
     <div class="env-front"></div>
+    <svg class="env-lines" viewBox="0 0 340 231" preserveAspectRatio="none" aria-hidden="true">
+      <polyline points="0,0 170,120 340,0"/><polyline class="dim" points="0,231 128,112"/><polyline class="dim" points="340,231 212,112"/>
+    </svg>
+    <div class="env-scan"></div>
     <div class="env-flap"></div>
     <div class="env-address">
       <small>PARA</small>
       <strong id="envName"></strong>
       <em id="envRel"></em>
+      <i class="barcode"></i>
     </div>
+    <div class="env-meta"><span>AES-256 · SELLADO</span><span class="leds"><i></i><i></i><i></i></span></div>
     <div class="seal" id="seal"><span>{ }</span></div>
   </div>
   </div>
@@ -78,6 +85,11 @@
         <div><small>FECHA</small><strong>Martes 27 de octubre</strong></div>
         <div><small>HORA</small><strong>7:00 PM</strong></div>
         <div><small>LUGAR</small><strong id="place"></strong></div>
+      </div>
+
+      <div class="map" id="map">
+        <div class="map-head"><span>&#9656; UBICACIÓN DEL OBJETIVO<small>Sala de comidas &middot; Sr. Chicharrón</small></span><a class="map-btn" id="mapLink" target="_blank" rel="noopener">CÓMO LLEGAR &#8599;</a></div>
+        <iframe id="mapFrame" title="Mapa de la ubicación" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
 
       <div class="countdown" id="countdown" aria-live="off">
