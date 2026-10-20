@@ -72,7 +72,7 @@ const say = (k, o) => (window.BIT ? BIT.say(narr(k), o) : sleep(1500));
 
 async function boot() {
   $("#startWrap").hidden = true;
-  SFX.unlock(); SFX.blip();
+  SFX.unlock(); SFX.blip(); MUSIC.start();
   const log = $("#bootLog");
   say(guest ? "intro" : "intro_lookup", { mood: "wave" });
   const lines = [

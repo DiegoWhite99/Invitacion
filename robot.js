@@ -108,7 +108,7 @@
 
   const wave = () => { S.waveUntil = now() + 2.4; };
   const celebrate = () => { S.celebrateAt = now(); };
-  window.BIT = { say, wave, celebrate, toggleMute, isMuted: () => S.muted };
+  window.BIT = { say, wave, celebrate, toggleMute, isMuted: () => S.muted, isTalking: () => S.talking };
 
   /* ================= 3D ================= */
   if (!T) return;

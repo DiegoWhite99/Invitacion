@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DB = ROOT / "rsvps.json"
-PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "sfx.js", "admin.html"}
+PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "sfx.js", "music.js", "admin.html"}
 TYPES_EXTRA = {".mp3": "audio/mpeg", ".json": "application/json"}
 # Voz de BIT: neuronal en español, con tono agudo; la web la acelera y le da el efecto robótico.
 VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+40Hz", "+4%"
