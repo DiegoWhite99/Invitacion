@@ -24,7 +24,7 @@
   const base = location.href.replace(/admin\.html.*$/, "index.html");
   const list = document.getElementById("list");
   GUESTS.forEach((g) => {
-    const url = `${base}?i=${g.id}&v=2`;
+    const url = `${base}?i=${g.id}&v=3`;
     const msg = `${g.g === "f" ? "Querida" : "Querido"} ${g.name.split(" ")[0]}, tienes una invitación especial 🎓✉️ ${url}`;
     const row = document.createElement("div");
     row.className = "row";
