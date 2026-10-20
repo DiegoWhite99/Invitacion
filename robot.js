@@ -19,18 +19,20 @@
 
   /* Voz: audios neuronales pregrabados (voices/, hechos con `python3 invitacion.py voces`),
      afinados aquí para sonar como un robot niño. Si falta un audio, usa la voz del navegador. */
-  const VOICE = {
-    rate: 1.14,    // sube el tono y la velocidad (más alto = más niño)
-    buzz: 58,      // frecuencia del "zumbido" robótico en Hz (0 = sin efecto)
-    buzzDepth: 0.22,
+  // Presets: ?voz=natural | nino | robot en el link para compararlos desde el celular.
+  const PRESETS = {
+    natural: { rate: 1.0, buzz: 0, buzzDepth: 0 },       // voz neuronal tal cual
+    nino: { rate: 1.1, buzz: 0, buzzDepth: 0 },          // un poco más aguda y alegre
+    robot: { rate: 1.1, buzz: 58, buzzDepth: 0.22 },     // con zumbido metálico
   };
+  const VOICE = PRESETS[new URLSearchParams(location.search).get("voz")] || PRESETS.nino;
   let manifest = {}, actx, tremolo, current;
-  fetch("voices/manifest.json").then((r) => r.json()).then((j) => { manifest = j; }).catch(() => {});
+  fetch("voices/manifest.json", { cache: "no-cache" }).then((r) => r.json()).then((j) => { manifest = j; }).catch(() => {});
 
   function audioChain() {
     if (actx || !(window.AudioContext || window.webkitAudioContext)) return;
     actx = new (window.AudioContext || window.webkitAudioContext)();
-    const shelf = actx.createBiquadFilter(); shelf.type = "highshelf"; shelf.frequency.value = 2500; shelf.gain.value = 5;
+    const shelf = actx.createBiquadFilter(); shelf.type = "highshelf"; shelf.frequency.value = 2500; shelf.gain.value = 2;
     tremolo = actx.createGain(); tremolo.gain.value = 1 - VOICE.buzzDepth;
     if (VOICE.buzz) {
       const osc = actx.createOscillator(), depth = actx.createGain();
@@ -58,13 +60,14 @@
       revealTimer = setInterval(() => {
         bubbleText.textContent = text.slice(0, ++i);
         if (i >= text.length) clearInterval(revealTimer);
-      }, Math.max(12, (ms * 0.85) / text.length));
+      }, Math.max(12, (ms * 0.7) / text.length));
     };
 
     return new Promise((resolve) => {
       let done = false;
       const finish = () => {
         if (done) return; done = true;
+        if (id === sayId) { clearInterval(revealTimer); bubbleText.textContent = text; } // nunca se corta el subtítulo
         const wait = Math.max(0, est * 0.5 - (Date.now() - t0));
         setTimeout(() => { if (id === sayId) S.talking = false; resolve(); }, wait);
       };
@@ -76,7 +79,7 @@
         const u = new SpeechSynthesisUtterance(text);
         const v = pickVoice();
         u.lang = v ? v.lang : "es-MX"; if (v) u.voice = v;
-        u.pitch = 2; u.rate = 1.1;
+        u.pitch = 1.3; u.rate = 1.05;
         u.onend = finish; u.onerror = finish;
         speechSynthesis.speak(u);
         setTimeout(finish, est * 2 + 3000);

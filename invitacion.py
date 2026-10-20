@@ -4,6 +4,7 @@
   python3 invitacion.py serve [puerto]   Sirve la web y guarda las confirmaciones (API /api/rsvp)
   python3 invitacion.py links <url_base> Genera links.txt con el link y mensaje de cada invitado
   python3 invitacion.py resumen          Muestra quién confirmó (lee rsvps.json)
+  python3 invitacion.py bump             Actualiza la versión de los archivos (úsalo antes de cada push)
   python3 invitacion.py voces            Genera los audios de SMIDY en voices/ (requiere: pip install edge-tts)
 """
 import asyncio
@@ -19,8 +20,8 @@ ROOT = Path(__file__).parent
 DB = ROOT / "rsvps.json"
 PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "sfx.js", "music.js", "tilt.js", "admin.html"}
 TYPES_EXTRA = {".mp3": "audio/mpeg", ".json": "application/json"}
-# Voz de SMIDY: neuronal en español, con tono agudo; la web la acelera y le da el efecto robótico.
-VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+40Hz", "+4%"
+# Voz de SMIDY: neuronal en español, sin retoques; la web sube un poco el tono al reproducir (ver PRESETS en robot.js).
+VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+0Hz", "+0%"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
 
 
@@ -101,6 +102,15 @@ def cmd_links(base):
     print(f"links.txt generado con {len(lines)} invitados")
 
 
+def cmd_bump():
+    """Cambia ?v=... en index.html para que los celulares no usen archivos viejos en caché."""
+    import time
+    f = ROOT / "index.html"
+    html = re.sub(r'((?:src|href)="(?!https?:)[\w./-]+\.(?:js|css))(?:\?v=\d+)?"', lambda m: f'{m[1]}?v={int(time.time())}"', f.read_text(encoding="utf-8"))
+    f.write_text(html, encoding="utf-8")
+    print("versión de archivos actualizada")
+
+
 def cmd_resumen():
     db = load_rsvps()
     guests = load_guests()
@@ -160,6 +170,8 @@ if __name__ == "__main__":
         cmd_serve(int(args[1]) if len(args) > 1 else 3000)
     elif args[:1] == ["links"] and len(args) > 1:
         cmd_links(args[1])
+    elif args[:1] == ["bump"]:
+        cmd_bump()
     elif args[:1] == ["voces"]:
         cmd_voces()
     elif args[:1] == ["resumen"]:
