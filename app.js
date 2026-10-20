@@ -3,7 +3,7 @@ const CONFIG = {
   // Tu número con indicativo de país, sin + ni espacios. Ej: Colombia -> "573001234567"
   whatsapp: "",
   // Lugar de la cena
-  place: "Por confirmar",
+  place: "Plaza de las Américas, sala de comidas, Sr. Chicharrón",
   // Fecha del evento (año, mes 0-11, día, hora, min)
   date: new Date(2026, 9, 27, 19, 0, 0),
   // Opcional: URL de Google Apps Script para guardar confirmaciones en una hoja (ver README)
@@ -70,6 +70,7 @@ const say = (k, o) => (window.BIT ? BIT.say(narr(k), o) : sleep(1500));
 
 async function boot() {
   $("#startWrap").hidden = true;
+  SFX.unlock(); SFX.blip();
   const log = $("#bootLog");
   say(guest ? "intro" : "intro_lookup", { mood: "wave" });
   const lines = [
@@ -115,13 +116,50 @@ let opened = false;
 async function openEnvelope() {
   if (opened) return; opened = true;
   const env = $("#envelope");
+  SFX.crack();
   env.classList.add("open");
   say("opening");
   $(".hint.small").style.visibility = "hidden";
-  await sleep(2200);
-  env.classList.add("leave");
-  await sleep(500);
+  await sleep(900);
+  $("#devMark").classList.add("show"); SFX.glitch();           // emblema DEV
+  await sleep(1300);
+  $("#notif").classList.add("show"); SFX.ping();               // notificación
+  await sleep(1700);
+  await portal(1900);                                          // portal
   showCard();
+  $("#notif").classList.remove("show");
+}
+
+/* ---------- Portal: túnel de hexágonos que te traga ---------- */
+function portal(ms) {
+  return new Promise((done) => {
+    const c = $("#portal"), x = c.getContext("2d");
+    const w = (c.width = innerWidth), h = (c.height = innerHeight);
+    const cx = w / 2, cy = h / 2, maxR = Math.hypot(w, h) / 2;
+    const hex = (r, rot) => { x.beginPath(); for (let k = 0; k < 6; k++) { const an = rot + (k * Math.PI) / 3; x[k ? "lineTo" : "moveTo"](cx + Math.cos(an) * r, cy + Math.sin(an) * r); } x.closePath(); };
+    c.classList.add("on"); $("#envelopeScreen").classList.add("warp"); SFX.whoosh(ms / 1000);
+    const t0 = performance.now();
+    (function loop(now) {
+      const p = Math.min(1, (now - t0) / ms);
+      x.globalCompositeOperation = "source-over";
+      x.fillStyle = "rgba(2, 5, 14, .3)"; x.fillRect(0, 0, w, h);
+      x.globalCompositeOperation = "lighter";
+      for (let i = 0; i < 28; i++) {
+        const f = (i / 28 + p * 2.4) % 1, r = Math.pow(f, 3) * maxR * 1.2 + 3, rot = p * 5 + i * 0.22;
+        x.lineWidth = 1 + f * 5; x.globalAlpha = Math.min(1, f * 6) * (1 - f * 0.35);
+        x.strokeStyle = "#00e5ff"; hex(r, rot); x.stroke();                       // canal cian
+        x.strokeStyle = "#ff2e63"; hex(r * 1.03, rot + 0.05); x.stroke();          // canal magenta desfasado
+      }
+      x.globalAlpha = 1;
+      const g = x.createRadialGradient(cx, cy, 0, cx, cy, 40 + p * maxR * 0.5);
+      g.addColorStop(0, `rgba(255,255,255,${0.2 + p * 0.8})`); g.addColorStop(1, "rgba(0,229,255,0)");
+      x.fillStyle = g; x.fillRect(0, 0, w, h);
+      if (p < 1) return requestAnimationFrame(loop);
+      $("#flash").classList.add("go");
+      done();
+      setTimeout(() => { c.classList.remove("on"); $("#flash").classList.remove("go"); }, 450);
+    })(t0);
+  });
 }
 $("#envelope").addEventListener("click", openEnvelope);
 $("#envelope").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") openEnvelope(); });
@@ -129,11 +167,15 @@ $("#envelope").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.k
 /* ---------- Carta ---------- */
 async function showCard() {
   $("#familyTag").textContent = guest.family || guest.rel;
+  $("#pName").textContent = guest.name.toUpperCase();
+  $("#pRel").textContent = guest.rel.toUpperCase();
+  $("#avatarLetter").textContent = guest.name[0];
+  $("#cardId").textContent = "ID-" + String([...guest.id].reduce((s, ch) => s * 31 + ch.charCodeAt(0), 7) % 100000).padStart(5, "0");
   $("#greet").textContent = `${guest.g === "f" ? "Querida" : "Querido"} ${guest.name.split(" ")[0]},`;
   $("#place").textContent = CONFIG.place;
   renderState();
   show("#cardScreen");
-  await sleep(900);
+  await sleep(1300);
   await say("hi", { mood: "wave" });
   const full = `${guest.msg}\n\nTe invito a mi cena de grado como Ingeniero de Sistemas. Será un honor compartir este momento contigo.`;
   const typing = typeInto($("#msg"), full, 38);
@@ -178,7 +220,7 @@ function respond(answer) {
   }
   renderState();
   if (answer === "yes") {
-    confetti(); if (window.BIT) BIT.celebrate();
+    confetti(); SFX.confirm(); if (window.BIT) BIT.celebrate();
     say("yes");
   } else say("no");
   // Abre WhatsApp con el mensaje listo para enviar
