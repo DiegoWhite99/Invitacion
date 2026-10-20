@@ -62,12 +62,16 @@ const params = new URLSearchParams(location.search);
 let guest = guests.find((g) => g.id === norm(params.get("i") || ""));
 
 const first = (g) => g.name.split(" ")[0];
-const say = (t, o) => (window.BIT ? BIT.say(t, o) : sleep(1500));
+const where = () => (CONFIG.place === "Por confirmar" ? "El lugar te lo confirma Diego muy pronto." : `Será en ${CONFIG.place}.`);
+const narr = (k, g = guest) => NARR[k].replace(/\{(\w+)\}/g, (_, v) => ({
+  first: g && first(g), saludo: g && (g.g === "f" ? "Querida" : "Querido"), msg: g && g.msg, where: where(),
+}[v]));
+const say = (k, o) => (window.BIT ? BIT.say(narr(k), o) : sleep(1500));
 
 async function boot() {
   $("#startWrap").hidden = true;
   const log = $("#bootLog");
-  say(`¡Hola! Soy BIT, el agente robot de Diego. ${guest ? `Estoy verificando tus credenciales, ${first(guest)}.` : "No encuentro tus credenciales. Escribe tu nombre."}`, { mood: "wave" });
+  say(guest ? "intro" : "intro_lookup", { mood: "wave" });
   const lines = [
     "> iniciando sistema de invitaciones v1.0...",
     "> cargando módulo: cena_de_grado.exe",
@@ -77,7 +81,7 @@ async function boot() {
   if (guest) {
     await typeInto(log, "> [OK] acceso concedido ✔\n", 14, true);
     await sleep(600);
-    await say(`Acceso concedido. ${first(guest)}, Diego te dejó una carta muy especial.`);
+    await say("granted");
     return showEnvelope();
   }
   $("#lookup").hidden = false;
@@ -98,21 +102,21 @@ $("#nameInput").addEventListener("input", (e) => {
   });
 });
 $("#lookup").addEventListener("submit", (e) => { e.preventDefault(); const b = $("#lookupMsg button"); if (b) b.click(); });
-async function boot2() { await typeInto($("#bootLog"), `> [OK] acceso concedido: ${guest.name} ✔\n`, 14, true); await say(`Te encontré, ${first(guest)}. Diego te dejó una carta muy especial.`); showEnvelope(); }
+async function boot2() { await typeInto($("#bootLog"), `> [OK] acceso concedido: ${guest.name} ✔\n`, 14, true); await say("found"); showEnvelope(); }
 
 /* ---------- Sobre ---------- */
 function showEnvelope() {
   $("#envName").textContent = guest.name;
   $("#envRel").textContent = guest.rel;
   show("#envelopeScreen");
-  say("Toca el sello rojo para abrir tu carta.");
+  say("seal");
 }
 let opened = false;
 async function openEnvelope() {
   if (opened) return; opened = true;
   const env = $("#envelope");
   env.classList.add("open");
-  say("¡Abriendo!");
+  say("opening");
   $(".hint.small").style.visibility = "hidden";
   await sleep(2200);
   env.classList.add("leave");
@@ -130,15 +134,13 @@ async function showCard() {
   renderState();
   show("#cardScreen");
   await sleep(900);
-  const hi = `${guest.g === "f" ? "Querida" : "Querido"} ${first(guest)}. Diego quiere decirte algo.`;
-  await say(hi, { mood: "wave" });
+  await say("hi", { mood: "wave" });
   const full = `${guest.msg}\n\nTe invito a mi cena de grado como Ingeniero de Sistemas. Será un honor compartir este momento contigo.`;
   const typing = typeInto($("#msg"), full, 38);
-  await say(full.replace(/\n+/g, " ").replace(/24\/7/g, "veinticuatro siete"));
+  await say("msg");
   await typing;
   $("#msg").classList.add("done");
-  const where = CONFIG.place === "Por confirmar" ? "El lugar te lo confirma Diego muy pronto." : `Será en ${CONFIG.place}.`;
-  await say(`La cena es el martes veintisiete de octubre, a las siete de la noche. ${where} Confirma tu asistencia con el botón de abajo.`);
+  await say("date");
 }
 
 /* ---------- Cuenta regresiva ---------- */
@@ -177,8 +179,8 @@ function respond(answer) {
   renderState();
   if (answer === "yes") {
     confetti(); if (window.BIT) BIT.celebrate();
-    say(`¡Genial, ${first(guest)}! Asistencia confirmada. Diego te espera el martes. ¡Felicitaciones al nuevo ingeniero!`);
-  } else say(`Entendido, ${first(guest)}. Diego te manda un abrazo enorme.`);
+    say("yes");
+  } else say("no");
   // Abre WhatsApp con el mensaje listo para enviar
   setTimeout(() => window.open(`https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(text)}`, "_blank"), answer === "yes" ? 900 : 200);
 }

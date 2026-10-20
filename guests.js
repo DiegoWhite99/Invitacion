@@ -5,7 +5,7 @@
 // msg: mensaje especial para esa persona
 window.GUESTS = [
   { id: "adriana", name: "Adriana Castelblanco", g: "f", rel: "Hermana", family: "Familia Campos Castelblanco",
-    msg: "Eres mi primer sistema de soporte 24/7. Sin tu uptime, este proyecto nunca habría compilado. Gracias por creer en mí desde el commit inicial." },
+    msg: "Eres mi primer sistema de soporte 24 horas. Sin tu uptime, este proyecto nunca habría compilado. Gracias por creer en mí desde el commit inicial." },
   { id: "gaby", name: "Gaby Campos Castelblanco", g: "f", rel: "Sobrina", family: "Familia Campos Castelblanco",
     msg: "Tu tío ya es oficialmente ingeniero. Ven a celebrar, que sin ti la cena no pasa los tests." },
   { id: "carlos", name: "Carlos Campos", g: "m", rel: "Cuñado", family: "Familia Campos Castelblanco",

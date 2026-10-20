@@ -6,8 +6,8 @@ const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 const DB = path.join(__dirname, "rsvps.json");
-const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json" };
-const PUBLIC = ["index.html", "style.css", "app.js", "guests.js", "admin.html", "robot.js"];
+const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".mp3": "audio/mpeg" };
+const PUBLIC = ["index.html", "style.css", "app.js", "guests.js", "admin.html", "robot.js", "narracion.js"];
 
 const read = () => { try { return JSON.parse(fs.readFileSync(DB, "utf8")); } catch { return {}; } };
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "content-type" };
@@ -39,7 +39,7 @@ http.createServer((req, res) => {
   }
 
   const file = url.pathname === "/" ? "index.html" : url.pathname.slice(1);
-  if (!PUBLIC.includes(file)) { res.writeHead(404); return res.end("No encontrado"); }
+  if (!PUBLIC.includes(file) && !/^voices\/[\w.]+\.(mp3|json)$/.test(file)) { res.writeHead(404); return res.end("No encontrado"); }
   res.writeHead(200, { "content-type": TYPES[path.extname(file)] || "text/plain" });
   fs.createReadStream(path.join(__dirname, file)).pipe(res);
 }).listen(PORT, () => console.log(`Invitación en http://localhost:${PORT}  (confirmaciones: /api/rsvps)`));

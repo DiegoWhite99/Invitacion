@@ -17,42 +17,84 @@
   }
   if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = () => {};
 
+  /* Voz: audios neuronales pregrabados (voices/, hechos con `python3 invitacion.py voces`),
+     afinados aquí para sonar como un robot niño. Si falta un audio, usa la voz del navegador. */
+  const VOICE = {
+    rate: 1.14,    // sube el tono y la velocidad (más alto = más niño)
+    buzz: 58,      // frecuencia del "zumbido" robótico en Hz (0 = sin efecto)
+    buzzDepth: 0.22,
+  };
+  let manifest = {}, actx, tremolo, current;
+  fetch("voices/manifest.json").then((r) => r.json()).then((j) => { manifest = j; }).catch(() => {});
+
+  function audioChain() {
+    if (actx || !(window.AudioContext || window.webkitAudioContext)) return;
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    const shelf = actx.createBiquadFilter(); shelf.type = "highshelf"; shelf.frequency.value = 2500; shelf.gain.value = 5;
+    tremolo = actx.createGain(); tremolo.gain.value = 1 - VOICE.buzzDepth;
+    if (VOICE.buzz) {
+      const osc = actx.createOscillator(), depth = actx.createGain();
+      osc.frequency.value = VOICE.buzz; depth.gain.value = VOICE.buzzDepth;
+      osc.connect(depth).connect(tremolo.gain); osc.start();
+    }
+    shelf.connect(tremolo).connect(actx.destination);
+    audioChain.input = shelf;
+  }
+
   function say(text, opts = {}) {
     const id = ++sayId;
     clearInterval(revealTimer);
+    if (current) { current.pause(); current = null; }
     bubble.classList.add("on");
     bubbleText.textContent = "";
-    const est = Math.max(1600, text.length * 66);
-    let i = 0;
-    revealTimer = setInterval(() => {
-      bubbleText.textContent = text.slice(0, ++i);
-      if (i >= text.length) clearInterval(revealTimer);
-    }, Math.max(12, (est * 0.8) / text.length));
     S.talking = true;
     if (opts.mood === "wave") wave();
     const t0 = Date.now();
+    let est = Math.max(1600, text.length * 66);
+
+    const reveal = (ms) => {
+      clearInterval(revealTimer);
+      let i = 0;
+      revealTimer = setInterval(() => {
+        bubbleText.textContent = text.slice(0, ++i);
+        if (i >= text.length) clearInterval(revealTimer);
+      }, Math.max(12, (ms * 0.85) / text.length));
+    };
 
     return new Promise((resolve) => {
       let done = false;
       const finish = () => {
         if (done) return; done = true;
-        // tiempo mínimo para que alcance a leerse aunque el navegador no tenga voz
         const wait = Math.max(0, est * 0.5 - (Date.now() - t0));
         setTimeout(() => { if (id === sayId) S.talking = false; resolve(); }, wait);
       };
-      const tts = !S.muted && "speechSynthesis" in window && speechSynthesis.getVoices().length > 0;
-      if (tts) {
+      const speechFallback = () => {
+        reveal(est);
+        const tts = !S.muted && "speechSynthesis" in window && speechSynthesis.getVoices().length > 0;
+        if (!tts) return setTimeout(finish, est);
         speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         const v = pickVoice();
         u.lang = v ? v.lang : "es-MX"; if (v) u.voice = v;
-        u.pitch = 1.5; u.rate = 1.03;
+        u.pitch = 2; u.rate = 1.1;
         u.onend = finish; u.onerror = finish;
         speechSynthesis.speak(u);
         setTimeout(finish, est * 2 + 3000);
-      } else {
-        setTimeout(finish, est);
-      }
+      };
+
+      const file = manifest[text];
+      if (S.muted || !file) return speechFallback();
+      try {
+        audioChain(); if (actx && actx.state === "suspended") actx.resume();
+        const a = new Audio(file);
+        a.preservesPitch = a.mozPreservesPitch = a.webkitPreservesPitch = false; // sube el tono al acelerar
+        a.playbackRate = VOICE.rate;
+        if (actx) actx.createMediaElementSource(a).connect(audioChain.input);
+        a.onloadedmetadata = () => { est = (a.duration * 1000) / VOICE.rate; reveal(est); };
+        a.onended = finish; a.onerror = speechFallback;
+        current = a;
+        a.play().catch(speechFallback);
+      } catch (e) { speechFallback(); }
     });
   }
 
@@ -60,7 +102,7 @@
     S.muted = !S.muted;
     muteBtn.textContent = S.muted ? "🔇" : "🔊";
     muteBtn.setAttribute("aria-label", S.muted ? "Activar voz" : "Silenciar voz");
-    if (S.muted && "speechSynthesis" in window) speechSynthesis.cancel();
+    if (S.muted) { if (current) current.pause(); if ("speechSynthesis" in window) speechSynthesis.cancel(); }
   }
   muteBtn.addEventListener("click", toggleMute);
 

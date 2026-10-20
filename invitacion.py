@@ -4,7 +4,10 @@
   python3 invitacion.py serve [puerto]   Sirve la web y guarda las confirmaciones (API /api/rsvp)
   python3 invitacion.py links <url_base> Genera links.txt con el link y mensaje de cada invitado
   python3 invitacion.py resumen          Muestra quién confirmó (lee rsvps.json)
+  python3 invitacion.py voces            Genera los audios de BIT en voices/ (requiere: pip install edge-tts)
 """
+import asyncio
+import hashlib
 import json
 import re
 import sys
@@ -14,7 +17,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DB = ROOT / "rsvps.json"
-PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "admin.html"}
+PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "admin.html"}
+TYPES_EXTRA = {".mp3": "audio/mpeg", ".json": "application/json"}
+# Voz de BIT: neuronal en español, con tono agudo; la web la acelera y le da el efecto robótico.
+VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+40Hz", "+4%"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
 
 
@@ -22,8 +28,8 @@ def load_guests():
     """Lee guests.js (comparte la misma lista que la web) sin duplicar datos."""
     text = (ROOT / "guests.js").read_text(encoding="utf-8")
     guests = []
-    for m in re.finditer(r"\{\s*id:\s*\"(\w+)\",\s*name:\s*\"([^\"]+)\",\s*g:\s*\"([fm])\",\s*rel:\s*\"([^\"]+)\"", text):
-        guests.append({"id": m[1], "name": m[2], "g": m[3], "rel": m[4]})
+    for m in re.finditer(r"\{\s*id:\s*\"(\w+)\",\s*name:\s*\"([^\"]+)\",\s*g:\s*\"([fm])\",\s*rel:\s*\"([^\"]+)\"[^}]*?msg:\s*\"([^\"]+)\"", text):
+        guests.append({"id": m[1], "name": m[2], "g": m[3], "rel": m[4], "msg": m[5]})
     return guests
 
 
@@ -51,9 +57,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/rsvps":
             return self._send(200, json.dumps(load_rsvps(), ensure_ascii=False, indent=2).encode())
         name = "index.html" if path == "/" else path.lstrip("/")
-        if name not in PUBLIC:
+        if name not in PUBLIC and not re.fullmatch(r"voices/[\w.]+\.(mp3|json)", name):
             return self._send(404, b"No encontrado", "text/plain")
-        self._send(200, (ROOT / name).read_bytes(), TYPES.get(Path(name).suffix, "text/plain"))
+        self._send(200, (ROOT / name).read_bytes(), {**TYPES, **TYPES_EXTRA}.get(Path(name).suffix, "text/plain"))
 
     def do_POST(self):
         if self.path != "/api/rsvp":
@@ -104,12 +110,54 @@ def cmd_resumen():
     print(f"\nConfirmados: {yes} · Respondieron: {len(db)} · Total: {len(guests)}")
 
 
+def cmd_voces():
+    try:
+        import edge_tts
+    except ImportError:
+        sys.exit("Falta edge-tts:  pip install edge-tts")
+
+    narr = json.loads(re.search(r"=\s*(\{.*\})\s*;", (ROOT / "narracion.js").read_text(encoding="utf-8"), re.S)[0].lstrip("= ").rstrip("; \n"))
+    place = re.search(r'place:\s*"([^"]*)"', (ROOT / "app.js").read_text(encoding="utf-8"))[1]
+    where = "El lugar te lo confirma Diego muy pronto." if place == "Por confirmar" else f"Será en {place}."
+
+    texts = set()
+    for g in load_guests():
+        vals = {"first": g["name"].split()[0], "saludo": "Querida" if g["g"] == "f" else "Querido", "msg": g["msg"], "where": where}
+        for tpl in narr.values():
+            texts.add(re.sub(r"\{(\w+)\}", lambda m: vals[m[1]], tpl))
+
+    out = ROOT / "voices"
+    out.mkdir(exist_ok=True)
+    manifest = {}
+    todo = []
+    for t in sorted(texts):
+        f = out / (hashlib.sha1(t.encode()).hexdigest()[:12] + ".mp3")
+        manifest[t] = f"voices/{f.name}"
+        if not f.exists():
+            todo.append((t, f))
+
+    async def run():
+        sem = asyncio.Semaphore(4)
+
+        async def one(t, f):
+            async with sem:
+                await edge_tts.Communicate(t, VOICE, rate=RATE, pitch=PITCH).save(str(f))
+
+        await asyncio.gather(*(one(t, f) for t, f in todo))
+
+    asyncio.run(run())
+    (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"{len(manifest)} audios en voices/ ({len(todo)} nuevos)")
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     if args[:1] == ["serve"]:
         cmd_serve(int(args[1]) if len(args) > 1 else 3000)
     elif args[:1] == ["links"] and len(args) > 1:
         cmd_links(args[1])
+    elif args[:1] == ["voces"]:
+        cmd_voces()
     elif args[:1] == ["resumen"]:
         cmd_resumen()
     else:
