@@ -70,7 +70,9 @@ const narr = (k, g = guest) => NARR[k].replace(/\{(\w+)\}/g, (_, v) => ({
 }[v]));
 const say = (k, o) => (window.SMIDY ? SMIDY.say(narr(k), o) : sleep(1500));
 
+let started = false;
 async function boot() {
+  if (started) return; started = true;
   $("#startWrap").hidden = true;
   SFX.unlock(); SFX.blip(); MUSIC.start(); TILT.enable();
   const log = $("#bootLog");

@@ -11,14 +11,9 @@
 
   /* ================= Narración ================= */
   let sayId = 0, revealTimer;
-  function pickVoice() {
-    const vs = ("speechSynthesis" in window) ? speechSynthesis.getVoices() : [];
-    return vs.find((v) => /^es[-_](MX|CO|US|419)/i.test(v.lang)) || vs.find((v) => v.lang.toLowerCase().startsWith("es")) || null;
-  }
-  if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = () => {};
 
   /* Voz: audios neuronales pregrabados (voices/, hechos con `python3 invitacion.py voces`),
-     afinados aquí para sonar como un robot niño. Si falta un audio, usa la voz del navegador. */
+     afinados aquí. Es la única voz: si falta un audio solo se muestran subtítulos. */
   // Presets: ?voz=natural | nino | robot en el link para compararlos desde el celular.
   const PRESETS = {
     natural: { rate: 1.0, buzz: 0, buzzDepth: 0 },       // voz neuronal tal cual
@@ -71,22 +66,11 @@
         const wait = Math.max(0, est * 0.5 - (Date.now() - t0));
         setTimeout(() => { if (id === sayId) S.talking = false; resolve(); }, wait);
       };
-      const speechFallback = () => {
-        reveal(est);
-        const tts = !S.muted && "speechSynthesis" in window && speechSynthesis.getVoices().length > 0;
-        if (!tts) return setTimeout(finish, est);
-        speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        const v = pickVoice();
-        u.lang = v ? v.lang : "es-MX"; if (v) u.voice = v;
-        u.pitch = 1.3; u.rate = 1.05;
-        u.onend = finish; u.onerror = finish;
-        speechSynthesis.speak(u);
-        setTimeout(finish, est * 2 + 3000);
-      };
+      // Una sola voz: solo los audios pregrabados de SMIDY. Sin audio (o silenciado), solo subtítulos.
+      const silent = () => { reveal(est); setTimeout(finish, est); };
 
       const file = manifest[text];
-      if (S.muted || !file) return speechFallback();
+      if (S.muted || !file) return silent();
       try {
         audioChain(); if (actx && actx.state === "suspended") actx.resume();
         const a = new Audio(file);
@@ -94,10 +78,11 @@
         a.playbackRate = VOICE.rate;
         if (actx) actx.createMediaElementSource(a).connect(audioChain.input);
         a.onloadedmetadata = () => { est = (a.duration * 1000) / VOICE.rate; reveal(est); };
-        a.onended = finish; a.onerror = speechFallback;
+        a.onended = finish;
+        a.onerror = silent;
         current = a;
-        a.play().catch(speechFallback);
-      } catch (e) { speechFallback(); }
+        a.play().then(() => { if (id !== sayId) a.pause(); }).catch(silent); // si ya hay una frase más nueva, esta se calla
+      } catch (e) { silent(); }
     });
   }
 
@@ -105,7 +90,7 @@
     S.muted = !S.muted;
     muteBtn.textContent = S.muted ? "🔇" : "🔊";
     muteBtn.setAttribute("aria-label", S.muted ? "Activar voz" : "Silenciar voz");
-    if (S.muted) { if (current) current.pause(); if ("speechSynthesis" in window) speechSynthesis.cancel(); }
+    if (S.muted && current) current.pause();
   }
   muteBtn.addEventListener("click", toggleMute);
 
