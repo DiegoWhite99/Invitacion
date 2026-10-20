@@ -7,7 +7,7 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const DB = path.join(__dirname, "rsvps.json");
 const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json" };
-const PUBLIC = ["index.html", "style.css", "app.js", "guests.js", "admin.html"];
+const PUBLIC = ["index.html", "style.css", "app.js", "guests.js", "admin.html", "robot.js"];
 
 const read = () => { try { return JSON.parse(fs.readFileSync(DB, "utf8")); } catch { return {}; } };
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "content-type" };

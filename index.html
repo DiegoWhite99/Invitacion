@@ -11,12 +11,17 @@
 </head>
 <body>
 <canvas id="bg"></canvas>
+<canvas id="bg3d"></canvas>
 
 <!-- Pantalla 1: arranque / búsqueda de nombre -->
 <section id="boot" class="screen active">
   <div class="terminal">
     <div class="term-bar"><i></i><i></i><i></i><span>invitacion@grado:~</span></div>
     <pre id="bootLog"></pre>
+    <div class="start-wrap" id="startWrap">
+      <button class="btn primary" id="start">&#9654; INICIAR EXPERIENCIA</button>
+      <p>Con sonido 🔊 · BIT te va a narrar la invitación</p>
+    </div>
     <form id="lookup" hidden>
       <label for="nameInput">&gt; ingresa tu nombre:</label>
       <input id="nameInput" autocomplete="off" placeholder="ej. Cristian" />
@@ -28,6 +33,7 @@
 <!-- Pantalla 2: sobre -->
 <section id="envelopeScreen" class="screen">
   <p class="hint">Una carta ha llegado para ti</p>
+  <div class="tilt" id="tilt">
   <div class="envelope" id="envelope" tabindex="0" role="button" aria-label="Abrir la carta">
     <div class="env-back"></div>
     <div class="paper-peek">
@@ -41,6 +47,7 @@
       <em id="envRel"></em>
     </div>
     <div class="seal" id="seal"><span>{ }</span></div>
+  </div>
   </div>
   <p class="hint small blink">toca el sello para abrir</p>
 </section>
@@ -79,6 +86,14 @@
   </article>
 </section>
 
+<!-- BIT: el agente robot -->
+<div class="dock" aria-live="polite">
+  <div class="bubble" id="bubble"><b>BIT · agente</b><span id="bubbleText"></span></div>
+</div>
+<button id="mute" aria-label="Silenciar voz">🔊</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="robot.js"></script>
 <script src="guests.js"></script>
 <script src="app.js"></script>
 </body>
