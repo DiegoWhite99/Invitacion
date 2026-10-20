@@ -38,7 +38,7 @@ window.GUESTS = [
     msg: "Papá, si no hubiese sido por ti, este camino no habría sido posible. Sé que no he sido una persona fácil, pero quiero decirte que con tu apoyo hoy cumplo uno de mis más grandes sueños: sentirme útil. Amo la ingeniería porque encontré en mí algo que desconocía. Tú sabes lo tormentoso que fue para mí la academia, pero con tu apoyo todo se puede. Más que un logro para mí, este logro te lo debo a ti: todo lo que soy y todo lo que seré.",
     tail: "Te invito a mi cena de grado. Este logro también es tuyo." },
   { id: "elizabeth", name: "Elizabeth Jimenez", g: "f", rel: "Mamá",
-    msg: "Mamá, gracias por cada bendición. Sé que no fue un camino fácil: tener un niño que es más pereza que astucia, y verlo ya como un hombre que, aunque el proceso fue largo, lo logró. ¡Y vamos por más! Eres una de las personas más importantes en mi vida y te amo con todo mi corazón. Si no fuese porque Dios me regaló este hermoso regalo de tenerlos, no habría logrado lo que he hecho hasta hoy.",
+    msg: "Mamá, gracias por cada bendición. Sé que no fue un camino fácil: tuviste un hijo con más pereza que astucia, y hoy lo ves convertido en un hombre que, aunque el proceso fue largo, lo logró. ¡Y vamos por más! Eres una de las personas más importantes de mi vida y te amo con todo mi corazón. Le doy gracias a Dios por el regalo más hermoso que me dio: tenerlos a ti y a papá. Sin ustedes, nada de esto habría sido posible.",
     tail: "Te espero en mi cena de grado, mamá. Este logro también es tuyo." },
   { id: "ageline", name: "Ageline Alba Pardo", g: "f", rel: "Amiga",
     msg: "Gracias por ser esa amiga que siempre responde al primer ping. Quiero compartir este momento contigo." },
