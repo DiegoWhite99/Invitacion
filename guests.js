@@ -1,0 +1,41 @@
+// Lista de invitados. Cada uno tiene su link: index.html?i=<id>
+// g: "f" | "m"  -> saludo (Querida/Querido)
+// rel: parentesco (se muestra en el sobre)
+// family: opcional, nombre de grupo familiar
+// msg: mensaje especial para esa persona
+window.GUESTS = [
+  { id: "adriana", name: "Adriana Castelblanco", g: "f", rel: "Hermana", family: "Familia Campos Castelblanco",
+    msg: "Eres mi primer sistema de soporte 24/7. Sin tu uptime, este proyecto nunca habría compilado. Gracias por creer en mí desde el commit inicial." },
+  { id: "gaby", name: "Gaby Campos Castelblanco", g: "f", rel: "Sobrina", family: "Familia Campos Castelblanco",
+    msg: "Tu tío ya es oficialmente ingeniero. Ven a celebrar, que sin ti la cena no pasa los tests." },
+  { id: "carlos", name: "Carlos Campos", g: "m", rel: "Cuñado", family: "Familia Campos Castelblanco",
+    msg: "Gracias por el apoyo constante, cuñado. Te reservé un asiento con buena conexión y mejor comida." },
+  { id: "exelino", name: "Exelino Pulido", g: "m", rel: "Tío",
+    msg: "Gracias por ser parte de la arquitectura de mi vida. Esta victoria también tiene su firma." },
+  { id: "nini", name: "Nini", g: "f", rel: "Esposa de mi tío",
+    msg: "Gracias por tanto cariño y buena energía. No habría merge sin su apoyo." },
+  { id: "sebas", name: "Sebas Pulido", g: "m", rel: "Primo",
+    msg: "Primo, ya es hora de que el ingeniero te invite una. Reserva tu lugar en el servidor." },
+  { id: "diana", name: "Diana", g: "f", rel: "Esposa de mi primo",
+    msg: "Tu presencia hace que cualquier reunión funcione sin errores. Te espero en la celebración." },
+  { id: "juliete", name: "Juliete", g: "f", rel: "Tía",
+    msg: "Gracias por cada consejo y cada oración. Eres una dependencia crítica en mi vida." },
+  { id: "jhon", name: "Jhon", g: "m", rel: "Esposo de mi tía",
+    msg: "Gracias por estar siempre ahí. Esta cena no sería la misma sin usted." },
+  { id: "andrea", name: "Andrea Ramirez", g: "f", rel: "Mi novia",
+    msg: "Aguantaste noches de código, desvelos y mis «ya casi termino». Eres mi mejor pull request aprobado a la primera." },
+  { id: "diego", name: "Diego", g: "m", rel: "Prueba (yo)",
+    msg: "Esta es tu vista previa. Así les va a llegar la invitación a todos." },
+  { id: "cristian", name: "Cristian Rocancio", g: "m", rel: "Mejor amigo",
+    msg: "Hermano, tú viste todos mis bugs y aun así me seguiste en producción. No puedes faltar a este deploy final." },
+  { id: "karen", name: "Karen", g: "f", rel: "Novia de Cristian",
+    msg: "Ven con Cristian y ayúdame a celebrar. Prometo que no habrá charla de código... bueno, casi." },
+  { id: "alberto", name: "Alberto", g: "m", rel: "Papá",
+    msg: "Papá, todo lo que soy es gracias a ti. Este título es tuyo también. Gracias por ser mi sistema operativo base." },
+  { id: "elizabeth", name: "Elizabeth Jimenez", g: "f", rel: "Mamá",
+    msg: "Mamá, gracias por cada bendición y cada plato de comida en los días de entrega. Este logro tiene tu nombre." },
+  { id: "ageline", name: "Ageline Alba Pardo", g: "f", rel: "Amiga",
+    msg: "Gracias por ser esa amiga que siempre responde al primer ping. Quiero compartir este momento contigo." },
+  { id: "silvio", name: "Silvio Andres Arevalo", g: "m", rel: "Amigo",
+    msg: "Parcero, gracias por las risas y el apoyo en el camino. Nos vemos en la cena para el último «git push» de la carrera." }
+];

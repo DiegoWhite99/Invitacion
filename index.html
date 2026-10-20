@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cena de Grado · Ingeniería de Sistemas</title>
+<meta name="theme-color" content="#050914">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@500;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="bg"></canvas>
+
+<!-- Pantalla 1: arranque / búsqueda de nombre -->
+<section id="boot" class="screen active">
+  <div class="terminal">
+    <div class="term-bar"><i></i><i></i><i></i><span>invitacion@grado:~</span></div>
+    <pre id="bootLog"></pre>
+    <form id="lookup" hidden>
+      <label for="nameInput">&gt; ingresa tu nombre:</label>
+      <input id="nameInput" autocomplete="off" placeholder="ej. Cristian" />
+      <div id="lookupMsg"></div>
+    </form>
+  </div>
+</section>
+
+<!-- Pantalla 2: sobre -->
+<section id="envelopeScreen" class="screen">
+  <p class="hint">Una carta ha llegado para ti</p>
+  <div class="envelope" id="envelope" tabindex="0" role="button" aria-label="Abrir la carta">
+    <div class="env-back"></div>
+    <div class="paper-peek">
+      <span>&lt;/&gt;</span>
+    </div>
+    <div class="env-front"></div>
+    <div class="env-flap"></div>
+    <div class="env-address">
+      <small>PARA</small>
+      <strong id="envName"></strong>
+      <em id="envRel"></em>
+    </div>
+    <div class="seal" id="seal"><span>{ }</span></div>
+  </div>
+  <p class="hint small blink">toca el sello para abrir</p>
+</section>
+
+<!-- Pantalla 3: carta -->
+<section id="cardScreen" class="screen">
+  <article class="card" id="card">
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+    <div class="card-inner">
+      <p class="tag">// ACCESO CONCEDIDO &middot; <span id="familyTag"></span></p>
+      <h1 class="crest">Cena de Grado</h1>
+      <p class="degree">Ingeniería de Sistemas</p>
+
+      <p class="greet" id="greet"></p>
+      <p class="typed" id="msg"></p>
+
+      <div class="details">
+        <div><small>FECHA</small><strong>Martes 27 de octubre</strong></div>
+        <div><small>HORA</small><strong>7:00 PM</strong></div>
+        <div><small>LUGAR</small><strong id="place"></strong></div>
+      </div>
+
+      <div class="countdown" id="countdown" aria-live="off">
+        <div><b id="cd-d">00</b><span>días</span></div>
+        <div><b id="cd-h">00</b><span>horas</span></div>
+        <div><b id="cd-m">00</b><span>min</span></div>
+        <div><b id="cd-s">00</b><span>seg</span></div>
+      </div>
+
+      <div class="actions" id="actions">
+        <button class="btn primary" id="yes">&#9654; Confirmo mi asistencia</button>
+        <button class="btn ghost" id="no">No podré asistir</button>
+      </div>
+      <p class="status" id="status" hidden></p>
+    </div>
+  </article>
+</section>
+
+<script src="guests.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

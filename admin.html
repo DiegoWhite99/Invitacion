@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Links de invitados</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #050914; color: #d6e6ff; max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+  h1 { font-size: 20px; }
+  p { color: #7d93b8; font-size: 14px; }
+  .row { display: flex; gap: 8px; align-items: center; padding: 10px 0; border-bottom: 1px solid #16233f; flex-wrap: wrap; }
+  .row b { flex: 1 1 180px; }
+  .row small { color: #7d93b8; display: block; font-weight: 400; }
+  button, a.b { background: #00e5ff; color: #03121c; border: 0; border-radius: 6px; padding: 7px 12px; font-size: 13px; cursor: pointer; text-decoration: none; }
+  a.b { background: #39ff88; }
+</style>
+</head>
+<body>
+<h1>Links personalizados</h1>
+<p>Copia el link de cada persona y envíaselo por WhatsApp. (Esta página es solo para ti.)</p>
+<div id="list"></div>
+<script src="guests.js"></script>
+<script>
+  const base = location.href.replace(/admin\.html.*$/, "index.html");
+  const list = document.getElementById("list");
+  GUESTS.forEach((g) => {
+    const url = `${base}?i=${g.id}`;
+    const msg = `${g.g === "f" ? "Querida" : "Querido"} ${g.name.split(" ")[0]}, tienes una invitación especial 🎓✉️ ${url}`;
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `<b>${g.name}<small>${g.rel}</small></b>`;
+    const copy = document.createElement("button");
+    copy.textContent = "Copiar link";
+    copy.onclick = () => navigator.clipboard.writeText(url).then(() => { copy.textContent = "¡Copiado!"; setTimeout(() => copy.textContent = "Copiar link", 1200); });
+    const wa = document.createElement("a");
+    wa.className = "b"; wa.target = "_blank"; wa.textContent = "WhatsApp";
+    wa.href = "https://wa.me/?text=" + encodeURIComponent(msg);
+    row.append(copy, wa);
+    list.appendChild(row);
+  });
+</script>
+</body>
+</html>
