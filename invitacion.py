@@ -28,8 +28,10 @@ def load_guests():
     """Lee guests.js (comparte la misma lista que la web) sin duplicar datos."""
     text = (ROOT / "guests.js").read_text(encoding="utf-8")
     guests = []
-    for m in re.finditer(r"\{\s*id:\s*\"(\w+)\",\s*name:\s*\"([^\"]+)\",\s*g:\s*\"([fm])\",\s*rel:\s*\"([^\"]+)\"[^}]*?msg:\s*\"([^\"]+)\"", text):
-        guests.append({"id": m[1], "name": m[2], "g": m[3], "rel": m[4], "msg": m[5]})
+    for block in re.finditer(r"\{\s*id:[^}]*\}", text):
+        b = block[0]
+        field = lambda k: (re.search(rf'\b{k}:\s*"([^"]*)"', b) or [None, ""])[1]
+        guests.append({"id": field("id"), "name": field("name"), "g": field("g"), "rel": field("rel"), "msg": field("msg"), "tail": field("tail")})
     return guests
 
 
@@ -122,8 +124,10 @@ def cmd_voces():
 
     texts = set()
     for g in load_guests():
-        vals = {"first": g["name"].split()[0], "saludo": "Querida" if g["g"] == "f" else "Querido", "msg": g["msg"], "where": where}
-        for tpl in narr.values():
+        vals = {"first": g["name"].split()[0], "saludo": "Querida" if g["g"] == "f" else "Querido", "msg": g["msg"], "tail": g["tail"] or narr["tail"], "where": where}
+        for k, tpl in narr.items():
+            if k == "tail":
+                continue
             texts.add(re.sub(r"\{(\w+)\}", lambda m: vals[m[1]], tpl))
 
     out = ROOT / "voices"

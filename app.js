@@ -1,7 +1,7 @@
 /* ================= CONFIGURACIÓN (edita esto) ================= */
 const CONFIG = {
   // Tu número con indicativo de país, sin + ni espacios. Ej: Colombia -> "573001234567"
-  whatsapp: "",
+  whatsapp: "573196946997",
   // Lugar de la cena
   place: "Plaza de las Américas, sala de comidas, Sr. Chicharrón",
   // Búsqueda para el mapa (ajusta la ciudad si hace falta)
@@ -66,7 +66,7 @@ let guest = guests.find((g) => g.id === norm(params.get("i") || ""));
 const first = (g) => g.name.split(" ")[0];
 const where = () => (CONFIG.place === "Por confirmar" ? "El lugar te lo confirma Diego muy pronto." : `Será en ${CONFIG.place}.`);
 const narr = (k, g = guest) => NARR[k].replace(/\{(\w+)\}/g, (_, v) => ({
-  first: g && first(g), saludo: g && (g.g === "f" ? "Querida" : "Querido"), msg: g && g.msg, where: where(),
+  first: g && first(g), saludo: g && (g.g === "f" ? "Querida" : "Querido"), msg: g && g.msg, tail: g && (g.tail || NARR.tail), where: where(),
 }[v]));
 const say = (k, o) => (window.SMIDY ? SMIDY.say(narr(k), o) : sleep(1500));
 
@@ -182,7 +182,7 @@ async function showCard() {
   show("#cardScreen");
   await sleep(1300);
   await say("hi", { mood: "wave" });
-  const full = `${guest.msg}\n\nTe invito a mi cena de grado como Ingeniero de Sistemas. Será un honor compartir este momento contigo.`;
+  const full = `${guest.msg}\n\n${guest.tail || NARR.tail}`;
   const typing = typeInto($("#msg"), full, 38);
   await say("msg");
   await typing;
