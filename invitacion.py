@@ -21,6 +21,8 @@ DB = ROOT / "rsvps.json"
 PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narracion.js", "sfx.js", "music.js", "tilt.js", "admin.html"}
 TYPES_EXTRA = {".mp3": "audio/mpeg", ".json": "application/json"}
 # Voz de SMIDY: neuronal en español, sin retoques; la web sube un poco el tono al reproducir (ver PRESETS en robot.js).
+# Sube este número cuando cambies mensajes: así los links nuevos nunca muestran una versión vieja en caché.
+LINK_V = 2
 VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+0Hz", "+0%"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
 
@@ -97,7 +99,7 @@ def cmd_links(base):
     lines = []
     for g in load_guests():
         saludo = "Querida" if g["g"] == "f" else "Querido"
-        lines.append(f"{g['name']} ({g['rel']})\n{saludo} {g['name'].split()[0]}, tienes una invitación especial 🎓✉️ {base}?i={g['id']}\n")
+        lines.append(f"{g['name']} ({g['rel']})\n{saludo} {g['name'].split()[0]}, tienes una invitación especial 🎓✉️ {base}?i={g['id']}&v={LINK_V}\n")
     (ROOT / "links.txt").write_text("\n".join(lines), encoding="utf-8")
     print(f"links.txt generado con {len(lines)} invitados")
 
