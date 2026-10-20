@@ -406,3 +406,13 @@ body::after { /* líneas de escaneo + viñeta sobre todo */
 .card-tilt .card { width: 100%; margin: 0; }
 .card::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
   background: radial-gradient(circle at var(--gx, 50%) var(--gy, 30%), rgba(255,255,255,.13), rgba(0,229,255,.06) 30%, transparent 55%); }
+
+/* corazones flotantes (efecto de Andrea) */
+.heart { position: fixed; bottom: -40px; z-index: 5; pointer-events: none; text-shadow: 0 0 12px currentColor; opacity: 0;
+  animation: heartUp var(--d, 8s) ease-in forwards; }
+@keyframes heartUp {
+  0% { transform: translate(0, 0) scale(.6); opacity: 0; }
+  10% { opacity: 1; }
+  50% { transform: translate(var(--sw, 30px), -55vh) scale(1); }
+  100% { transform: translate(calc(var(--sw, 30px) * -.6), -112vh) scale(1.15); opacity: 0; }
+}

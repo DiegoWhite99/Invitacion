@@ -109,11 +109,26 @@ $("#nameInput").addEventListener("input", (e) => {
 $("#lookup").addEventListener("submit", (e) => { e.preventDefault(); const b = $("#lookupMsg button"); if (b) b.click(); });
 async function boot2() { await typeInto($("#bootLog"), `> [OK] acceso concedido: ${guest.name} ✔\n`, 14, true); await say("found"); showEnvelope(); }
 
+/* ---------- Efecto especial: lluvia de corazones (guest.fx = "hearts") ---------- */
+let heartsOn = false;
+function hearts() {
+  if (heartsOn) return; heartsOn = true;
+  setInterval(() => {
+    if (document.hidden) return;
+    const h = document.createElement("span");
+    h.className = "heart"; h.textContent = Math.random() > .25 ? "♥" : "❤";
+    h.style.cssText = `left:${Math.random() * 100}vw;font-size:${18 + Math.random() * 30}px;--d:${6 + Math.random() * 6}s;--sw:${(Math.random() - .5) * 90}px;color:${["#ff4d8d", "#ff2e63", "#ff8fb8", "#ffd1e3"][(Math.random() * 4) | 0]}`;
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 12500);
+  }, 320);
+}
+
 /* ---------- Sobre ---------- */
 function showEnvelope() {
   $("#envName").textContent = guest.name;
   $("#envRel").textContent = guest.rel;
   show("#envelopeScreen");
+  if (guest.fx === "hearts") hearts();
   say("seal");
 }
 let opened = false;
@@ -181,6 +196,7 @@ async function showCard() {
   $("#greet").textContent = `${guest.g === "f" ? "Querida" : "Querido"} ${guest.name.split(" ")[0]},`;
   $("#place").textContent = CONFIG.place;
   renderState();
+  if (guest.fx === "hearts") hearts();
   show("#cardScreen");
   await sleep(1300);
   await say("hi", { mood: "wave" });
