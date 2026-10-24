@@ -3,6 +3,7 @@
 // rel: parentesco (se muestra en el sobre)
 // family: opcional, nombre de grupo familiar
 // msg: mensaje especial para esa persona
+// plural: true -> invitación para varias personas (usa NARR_PL y "Queridos"); first: cómo se les nombra en el saludo
 window.GUESTS = [
   { id: "adriana", name: "Adriana Castelblanco", g: "f", rel: "Hermana", family: "Familia Campos Castelblanco",
     msg: "Eres mi primer sistema de soporte 24 horas. Sin tu uptime, este proyecto nunca habría compilado. Gracias por creer en mí desde el commit inicial." },
@@ -32,6 +33,9 @@ window.GUESTS = [
   { id: "andrea", name: "Andrea Ramirez", g: "f", rel: "Mi novia", fx: "hearts",
     msg: "Oye, amor, eres mi princesa, y quiero que mi princesa esté conmigo en este día. Me has enseñado que puedo hacer magia con las manos y que puedo llevar mis ideas a la realidad. A veces soy raro, pero te amo, no te olvides de eso. Eres muy importante para mí, y este es un logro que quiero compartir contigo. Espero que los otros logros que nos lleguen en este camino los vivamos de tu mano, mi princesa hermosa.",
     tail: "Te invito a mi cena de grado, mi princesa. Sin ti no sería lo mismo." },
+  { id: "eva", name: "Tía Eva y familia", first: "tía Eva y familia", g: "m", plural: true, rel: "Tía y familia",
+    msg: "Hola tía Eva y familia, espero que estén bien. Solo pasaba por aquí para invitarlos a mi cena de grado!",
+    tail: "¡Me haría muy feliz verlos ahí a todos!" },
   { id: "diego", name: "Diego", g: "m", rel: "Prueba (yo)",
     msg: "Esta es tu vista previa. Así les va a llegar la invitación a todos." },
   { id: "cristian", name: "Cristian Rocancio", g: "m", rel: "Mejor amigo",

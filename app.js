@@ -63,10 +63,11 @@ const guests = window.GUESTS;
 const params = new URLSearchParams(location.search);
 let guest = guests.find((g) => g.id === norm(params.get("i") || ""));
 
-const first = (g) => g.name.split(" ")[0];
+const first = (g) => g.first || g.name.split(" ")[0];
+const saludo = (g) => (g.plural ? "Queridos" : g.g === "f" ? "Querida" : "Querido");
 const where = () => (CONFIG.place === "Por confirmar" ? "El lugar te lo confirma Diego muy pronto." : `Será en ${CONFIG.place}.`);
-const narr = (k, g = guest) => NARR[k].replace(/\{(\w+)\}/g, (_, v) => ({
-  first: g && first(g), saludo: g && (g.g === "f" ? "Querida" : "Querido"), msg: g && g.msg, tail: g && (g.tail || NARR.tail), where: where(),
+const narr = (k, g = guest) => ((g && g.plural && NARR_PL[k]) || NARR[k]).replace(/\{(\w+)\}/g, (_, v) => ({
+  first: g && first(g), saludo: g && saludo(g), msg: g && g.msg, tail: g && (g.tail || (g.plural && NARR_PL.tail) || NARR.tail), where: where(),
 }[v]));
 const say = (k, o) => (window.SMIDY ? SMIDY.say(narr(k), o) : sleep(1500));
 
@@ -193,7 +194,7 @@ async function showCard() {
   $("#pRel").textContent = guest.rel.toUpperCase();
   $("#avatarLetter").textContent = guest.name[0];
   $("#cardId").textContent = "ID-" + String([...guest.id].reduce((s, ch) => s * 31 + ch.charCodeAt(0), 7) % 100000).padStart(5, "0");
-  $("#greet").textContent = `${guest.g === "f" ? "Querida" : "Querido"} ${guest.name.split(" ")[0]},`;
+  $("#greet").textContent = `${saludo(guest)} ${first(guest)},`;
   $("#place").textContent = CONFIG.place;
   renderState();
   if (guest.fx === "hearts") hearts();

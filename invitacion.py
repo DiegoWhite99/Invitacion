@@ -34,7 +34,7 @@ def load_guests():
     for block in re.finditer(r"\{\s*id:[^}]*\}", text):
         b = block[0]
         field = lambda k: (re.search(rf'\b{k}:\s*"([^"]*)"', b) or [None, ""])[1]
-        guests.append({"id": field("id"), "name": field("name"), "g": field("g"), "rel": field("rel"), "msg": field("msg"), "tail": field("tail")})
+        guests.append({"id": field("id"), "name": field("name"), "g": field("g"), "rel": field("rel"), "msg": field("msg"), "tail": field("tail"), "first": field("first"), "plural": "plural: true" in b})
     return guests
 
 
@@ -98,8 +98,8 @@ def cmd_links(base):
     base = base.rstrip("/") + "/index.html"
     lines = []
     for g in load_guests():
-        saludo = "Querida" if g["g"] == "f" else "Querido"
-        lines.append(f"{g['name']} ({g['rel']})\n{saludo} {g['name'].split()[0]}, tienes una invitación especial 🎓✉️ {base}?i={g['id']}&v={LINK_V}\n")
+        saludo = "Queridos" if g["plural"] else "Querida" if g["g"] == "f" else "Querido"
+        lines.append(f"{g['name']} ({g['rel']})\n{saludo} {g['first'] or g['name'].split()[0]}, {'tienen' if g['plural'] else 'tienes'} una invitación especial 🎓✉️ {base}?i={g['id']}&v={LINK_V}\n")
     (ROOT / "links.txt").write_text("\n".join(lines), encoding="utf-8")
     print(f"links.txt generado con {len(lines)} invitados")
 
@@ -130,14 +130,16 @@ def cmd_voces():
     except ImportError:
         sys.exit("Falta edge-tts:  pip install edge-tts")
 
-    narr = json.loads(re.search(r"=\s*(\{.*\})\s*;", (ROOT / "narracion.js").read_text(encoding="utf-8"), re.S)[0].lstrip("= ").rstrip("; \n"))
+    narr = json.loads(re.search(r"window\.NARR\s*=\s*(\{.*?\})\s*;", (ROOT / "narracion.js").read_text(encoding="utf-8"), re.S)[1])
     place = re.search(r'place:\s*"([^"]*)"', (ROOT / "app.js").read_text(encoding="utf-8"))[1]
     where = "El lugar te lo confirma Diego muy pronto." if place == "Por confirmar" else f"Será en {place}."
 
+    narr_pl = {**narr, **json.loads(re.search(r"NARR_PL\s*=\s*(\{.*?\})\s*;", (ROOT / "narracion.js").read_text(encoding="utf-8"), re.S)[1])}
     texts = set()
     for g in load_guests():
-        vals = {"first": g["name"].split()[0], "saludo": "Querida" if g["g"] == "f" else "Querido", "msg": g["msg"], "tail": g["tail"] or narr["tail"], "where": where}
-        for k, tpl in narr.items():
+        src = narr_pl if g["plural"] else narr
+        vals = {"first": g["first"] or g["name"].split()[0], "saludo": "Queridos" if g["plural"] else "Querida" if g["g"] == "f" else "Querido", "msg": g["msg"], "tail": g["tail"] or src["tail"], "where": where}
+        for k, tpl in src.items():
             if k == "tail":
                 continue
             texts.add(re.sub(r"\{(\w+)\}", lambda m: vals[m[1]], tpl))

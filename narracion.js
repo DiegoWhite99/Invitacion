@@ -16,3 +16,16 @@ window.NARR = {
   "yes": "¡Genial, {first}! Asistencia confirmada. Diego te espera el martes. ¡Felicitaciones al nuevo ingeniero!",
   "no": "Entendido, {first}. Diego te manda un abrazo enorme."
 };
+
+// Versión en plural para invitaciones a familias (guest.plural). Las claves que no estén aquí usan NARR.
+window.NARR_PL = {
+  "intro": "¡Hola! Soy SMIDY, el agente robot de Diego. Estoy verificando sus credenciales, {first}.",
+  "granted": "Acceso concedido. {first}, Diego les dejó una carta muy especial.",
+  "found": "Los encontré, {first}. Diego les dejó una carta muy especial.",
+  "seal": "Toquen el sello rojo para abrir su carta.",
+  "hi": "{saludo} {first}. Diego quiere decirles algo.",
+  "tail": "Los invito a mi cena de grado como Ingeniero de Sistemas. Será un honor compartir este momento con ustedes.",
+  "date": "La cena es el martes veintisiete de octubre, a las siete de la noche. {where} Confirmen su asistencia con el botón de abajo.",
+  "yes": "¡Genial, {first}! Asistencia confirmada. Diego los espera el martes. ¡Felicitaciones al nuevo ingeniero!",
+  "no": "Entendido, {first}. Diego les manda un abrazo enorme."
+};
