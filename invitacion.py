@@ -22,7 +22,7 @@ PUBLIC = {"index.html", "style.css", "app.js", "guests.js", "robot.js", "narraci
 TYPES_EXTRA = {".mp3": "audio/mpeg", ".json": "application/json"}
 # Voz de SMIDY: neuronal en español, sin retoques; la web sube un poco el tono al reproducir (ver PRESETS en robot.js).
 # Sube este número cuando cambies mensajes: así los links nuevos nunca muestran una versión vieja en caché.
-LINK_V = 3
+LINK_V = 4
 VOICE, PITCH, RATE = "es-MX-DaliaNeural", "+0Hz", "+0%"
 TYPES = {".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8"}
 
